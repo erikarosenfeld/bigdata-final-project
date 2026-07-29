@@ -1,0 +1,299 @@
+#!/usr/bin/env python3
+"""
+T0 — Download missing TLC trip data (2025-02 through 2026-02, all 4 datasets)
+and extract + compare schemas.
+
+Already on Arnes: data up to 2025-01
+Need to download: 2025-02 through 2026-02 (13 months × 4 datasets = 52 files)
+
+Uses Dask bags for parallel downloads. Each worker:
+  1. Downloads one parquet file from TLC CDN
+  2. Reads schema with PyArrow
+  3. Returns (filename, schema_dict)
+
+Finalize step: compare all schemas, detect column-name/dtype mismatches per dataset.
+Save results to outputs/t0_schema_comparison.csv
+
+Usage:
+  python3 t0_download_and_schema.py
+"""
+
+import os
+import sys
+import logging
+from datetime import datetime, timedelta
+from pathlib import Path
+from typing import Tuple, Dict, List
+import urllib.request
+import urllib.error
+
+import pyarrow.parquet as pq
+import pandas as pd
+
+# Try to import Dask; if not available, fall back to sequential
+try:
+    import dask.bag as db
+    from dask.distributed import Client
+    from dask_jobqueue import SLURMCluster
+    HAS_DASK = True
+except ImportError:
+    print("WARNING: Dask not available, falling back to sequential downloads", file=sys.stderr)
+    HAS_DASK = False
+
+# ============================================================================
+# Configuration
+# ============================================================================
+
+TLC_BASE_URL = "https://d37ci6vzurychx.cloudfront.net/trip-data"
+# Raw downloaded parquet files — kept outside the repo (large, gitignored anyway)
+WORK_DIR = "/d/hpc/projects/FRI/bigdata/students/em51537"
+DATA_DIR = os.path.join(WORK_DIR, "taxi_data_raw")
+# Small outputs (CSVs) — saved inside the repo so they're easy to find/commit
+REPO_DIR = os.path.join(WORK_DIR, "bigdata-final-project")
+OUT_DIR = os.path.join(REPO_DIR, "outputs", "t0")
+
+DATASETS = ["yellow", "green", "fhv", "fhvhv"]
+
+# Months to download: 2025-02 through 2026-02 (13 months total)
+YEARS_MONTHS = []
+for year in [2025, 2026]:
+    for month in range(1, 13):
+        if year == 2025 and month == 1:
+            continue  # Already have 2025-01
+        if year == 2026 and month > 2:
+            break  # Only need through 2026-02
+        YEARS_MONTHS.append((year, month))
+
+# Create directories if they don't exist
+os.makedirs(DATA_DIR, exist_ok=True)
+os.makedirs(OUT_DIR, exist_ok=True)
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(message)s"
+)
+logger = logging.getLogger(__name__)
+
+# ============================================================================
+# Helper functions
+# ============================================================================
+
+def download_and_get_schema(url_and_dataset: Tuple[str, str]) -> Tuple[str, str, Dict]:
+    """
+    Download one parquet file and extract its schema.
+    
+    Args:
+        url_and_dataset: (url, dataset_name)
+    
+    Returns:
+        (filename, dataset, schema_dict) where schema_dict = {col: dtype_str, ...}
+    """
+    url, dataset = url_and_dataset
+    filename = url.split("/")[-1]
+    filepath = os.path.join(DATA_DIR, filename)
+    
+    try:
+        # Skip if already exists
+        if os.path.exists(filepath):
+            logger.info(f"[{dataset}] {filename} already exists, skipping download")
+        else:
+            logger.info(f"[{dataset}] Downloading {filename}...")
+            req = urllib.request.Request(
+                url,
+                headers={"User-Agent": "Mozilla/5.0 (compatible; research-download/1.0)"}
+            )
+            with urllib.request.urlopen(req) as response, open(filepath, "wb") as out_file:
+                out_file.write(response.read())
+            logger.info(f"[{dataset}] Downloaded {filename}")
+        
+        # Read schema with PyArrow
+        parquet_file = pq.ParquetFile(filepath)
+        schema = parquet_file.schema_arrow
+        
+        # Convert to dict {col_name: dtype_string}
+        schema_dict = {
+            field.name: str(field.type)
+            for field in schema
+        }
+        
+        return (filename, dataset, schema_dict)
+    
+    except Exception as e:
+        logger.error(f"[{dataset}] Failed to process {filename}: {e}")
+        return (filename, dataset, None)
+
+
+def build_download_list() -> List[Tuple[str, str]]:
+    """Build list of (url, dataset) tuples for all missing files."""
+    download_list = []
+    
+    for year, month in YEARS_MONTHS:
+        for dataset in DATASETS:
+            filename = f"{dataset}_tripdata_{year:04d}-{month:02d}.parquet"
+            url = f"{TLC_BASE_URL}/{filename}"
+            download_list.append((url, dataset))
+    
+    return download_list
+
+
+def compare_schemas(schema_results: List[Tuple[str, str, Dict]]) -> pd.DataFrame:
+    """
+    Compare schemas: group by dataset, check for column-name/dtype mismatches.
+    Return summary dataframe.
+    """
+    summary_rows = []
+    
+    for dataset in DATASETS:
+        files_for_dataset = [
+            (filename, schema_dict)
+            for filename, ds, schema_dict in schema_results
+            if ds == dataset and schema_dict is not None
+        ]
+        
+        if not files_for_dataset:
+            logger.warning(f"[{dataset}] No successfully downloaded files")
+            summary_rows.append({
+                "dataset": dataset,
+                "num_files": 0,
+                "num_columns": 0,
+                "schema_consistent": False,
+                "issues": "No files downloaded"
+            })
+            continue
+        
+        # Check if all files have the same schema
+        first_schema = files_for_dataset[0][1]
+        all_same = all(
+            schema_dict == first_schema
+            for _, schema_dict in files_for_dataset
+        )
+        
+        issues = []
+        if not all_same:
+            # Find which files differ
+            for filename, schema_dict in files_for_dataset[1:]:
+                if schema_dict != first_schema:
+                    missing_cols = set(first_schema.keys()) - set(schema_dict.keys())
+                    extra_cols = set(schema_dict.keys()) - set(first_schema.keys())
+                    dtype_mismatches = [
+                        col for col in first_schema.keys() & schema_dict.keys()
+                        if first_schema[col] != schema_dict[col]
+                    ]
+                    if missing_cols or extra_cols or dtype_mismatches:
+                        issues.append(f"{filename}: missing={missing_cols}, extra={extra_cols}, dtype_mismatches={dtype_mismatches}")
+        
+        summary_rows.append({
+            "dataset": dataset,
+            "num_files": len(files_for_dataset),
+            "num_columns": len(first_schema),
+            "schema_consistent": all_same,
+            "issues": "; ".join(issues) if issues else "None"
+        })
+    
+    return pd.DataFrame(summary_rows)
+
+
+def save_detailed_schemas(schema_results: List[Tuple[str, str, Dict]]):
+    """Save detailed schema info per file to CSV for inspection."""
+    rows = []
+    for filename, dataset, schema_dict in schema_results:
+        if schema_dict is None:
+            rows.append({
+                "dataset": dataset,
+                "filename": filename,
+                "status": "FAILED",
+                "num_columns": None,
+                "columns": None
+            })
+        else:
+            rows.append({
+                "dataset": dataset,
+                "filename": filename,
+                "status": "OK",
+                "num_columns": len(schema_dict),
+                "columns": ", ".join(f"{col}:{dtype}" for col, dtype in schema_dict.items())
+            })
+    
+    df_detailed = pd.DataFrame(rows)
+    csv_path = os.path.join(OUT_DIR, "t0_detailed_schemas.csv")
+    df_detailed.to_csv(csv_path, index=False)
+    logger.info(f"Detailed schemas saved to {csv_path}")
+    return df_detailed
+
+
+# ============================================================================
+# Main
+# ============================================================================
+
+def main():
+    logger.info("=" * 80)
+    logger.info("T0 — Download missing TLC data and compare schemas")
+    logger.info("=" * 80)
+    logger.info(f"Data directory: {DATA_DIR}")
+    logger.info(f"Output directory: {OUT_DIR}")
+    logger.info(f"Datasets: {DATASETS}")
+    logger.info(f"Months to download: {len(YEARS_MONTHS)} (2025-02 through 2026-02)")
+    logger.info(f"Total files: {len(YEARS_MONTHS) * len(DATASETS)}")
+    
+    # Build download list
+    download_list = build_download_list()
+    logger.info(f"\nBuilt download list with {len(download_list)} files")
+    
+    # Download and extract schemas
+    if HAS_DASK:
+        logger.info("Using Dask bags for parallel downloads...")
+        try:
+            # Try to connect to SLURM cluster; if not available, use local threads
+            cluster = SLURMCluster(
+                cores=4,
+                processes=1,
+                memory="8GB",
+                walltime="02:00:00",
+                queue="all"
+            )
+            client = Client(cluster)
+            cluster.scale(jobs=4)
+            logger.info(f"Connected to SLURM cluster: {client}")
+        except Exception as e:
+            logger.warning(f"Could not connect to SLURM cluster ({e}), using local scheduler")
+            client = None
+        
+        bag = db.from_sequence(download_list, npartitions=len(download_list))
+        schema_results = bag.map(download_and_get_schema).compute()
+        
+        if client is not None:
+            client.close()
+    else:
+        logger.info("Using sequential downloads (Dask not available)...")
+        schema_results = [download_and_get_schema(item) for item in download_list]
+    
+    logger.info(f"\nProcessed {len(schema_results)} files")
+    
+    # Compare schemas
+    logger.info("\nComparing schemas...")
+    summary_df = compare_schemas(schema_results)
+    logger.info("\n" + summary_df.to_string(index=False))
+    
+    # Save results
+    summary_csv = os.path.join(OUT_DIR, "t0_schema_comparison.csv")
+    summary_df.to_csv(summary_csv, index=False)
+    logger.info(f"\nSchema comparison saved to {summary_csv}")
+    
+    # Save detailed schemas
+    save_detailed_schemas(schema_results)
+    
+    # Print summary
+    logger.info("\n" + "=" * 80)
+    logger.info("SUMMARY")
+    logger.info("=" * 80)
+    for _, row in summary_df.iterrows():
+        status = "✓ PASS" if row["schema_consistent"] else "✗ MISMATCH"
+        logger.info(f"[{row['dataset'].upper():6s}] {status} | {row['num_files']} files, {row['num_columns']} columns")
+        if row["issues"] != "None":
+            logger.info(f"           Issues: {row['issues']}")
+    
+    logger.info("=" * 80)
+
+
+if __name__ == "__main__":
+    main()
