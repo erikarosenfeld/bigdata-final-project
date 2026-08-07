@@ -6,6 +6,9 @@ Uses the year=2024 Green Taxi partition already produced by T1
 (repartitioned_data/green/year=2024/). Exports it to CSV, CSV.gz, HDF5,
 and a DuckDB database file, then compares file size and pandas read speed
 across all four formats.
+
+Usage:
+  python3 t4_format_comparison.py
 """
 
 import glob
@@ -24,13 +27,20 @@ WORK_DIR = "/d/hpc/projects/FRI/bigdata/students/em51537"
 REPO_DIR = os.path.join(WORK_DIR, "bigdata-final-project")
 
 INPUT_DIR = os.path.join(WORK_DIR, "repartitioned_data", "green", "year=2024")
+
+# Large exported test files (CSV/HDF5/DuckDB copies of the data) live OUTSIDE
+# the repo — these are multi-format copies of real data, not small results.
+SCRATCH_DIR = os.path.join(WORK_DIR, "t4_scratch")
+os.makedirs(SCRATCH_DIR, exist_ok=True)
+
+# Only the small comparison results table goes inside the repo
 OUT_DIR = os.path.join(REPO_DIR, "outputs", "t4")
 os.makedirs(OUT_DIR, exist_ok=True)
 
-CSV_PATH = os.path.join(OUT_DIR, "green_2024.csv")
-CSV_GZ_PATH = os.path.join(OUT_DIR, "green_2024.csv.gz")
-HDF5_PATH = os.path.join(OUT_DIR, "green_2024.h5")
-DUCKDB_PATH = os.path.join(OUT_DIR, "green_2024.duckdb")
+CSV_PATH = os.path.join(SCRATCH_DIR, "green_2024.csv")
+CSV_GZ_PATH = os.path.join(SCRATCH_DIR, "green_2024.csv.gz")
+HDF5_PATH = os.path.join(SCRATCH_DIR, "green_2024.h5")
+DUCKDB_PATH = os.path.join(SCRATCH_DIR, "green_2024.duckdb")
 RESULTS_PATH = os.path.join(OUT_DIR, "t4_format_comparison.csv")
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
