@@ -1,0 +1,16 @@
+2026-08-07 16:16:48,632 [INFO] ================================================================================
+2026-08-07 16:16:48,632 [INFO] Processing dataset: GREEN
+2026-08-07 16:16:48,632 [INFO] ================================================================================
+2026-08-07 16:16:48,643 [INFO] [green] Found 146 files (filtered to 2014-01 onwards per instructions)
+2026-08-07 16:16:58,778 [INFO] [green] Schema sanity check passed — all columns mapped.
+2026-08-07 16:16:58,779 [INFO] [green] Processing 146 files, 3 at a time (one file's worth of data in memory per worker)...
+2026-08-07 16:17:13,017 [INFO] [green] Processed 20/146 files
+2026-08-07 16:17:25,035 [INFO] [green] Processed 40/146 files
+2026-08-07 16:17:33,482 [INFO] [green] Processed 60/146 files
+2026-08-07 16:17:37,692 [INFO] [green] Processed 80/146 files
+2026-08-07 16:17:38,863 [INFO] [green] Processed 100/146 files
+2026-08-07 16:17:39,865 [INFO] [green] Processed 120/146 files
+2026-08-07 16:17:40,657 [INFO] [green] Processed 140/146 files
+2026-08-07 16:17:40,895 [INFO] [green] Processed 146/146 files
+2026-08-07 16:17:40,918 [INFO] [green] Done. Output at /d/hpc/projects/FRI/bigdata/students/em51537/repartitioned_data/green
+2026-08-07 16:17:40,929 [INFO] [green] Year counts saved to /d/hpc/projects/FRI/bigdata/students/em51537/bigdata-final-project/outputs/t1/t1_green_year_counts.csv

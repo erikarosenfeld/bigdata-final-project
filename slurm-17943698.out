@@ -1,0 +1,16 @@
+2026-07-29 12:54:31,825 - distributed.nanny - INFO -         Start Nanny at: 'tcp://153.5.72.169:43737'
+2026-07-29 12:54:33,569 - distributed.worker - INFO -       Start worker at:   tcp://153.5.72.169:41631
+2026-07-29 12:54:33,569 - distributed.worker - INFO -          Listening to:   tcp://153.5.72.169:41631
+2026-07-29 12:54:33,569 - distributed.worker - INFO -           Worker name:             SLURMCluster-0
+2026-07-29 12:54:33,569 - distributed.worker - INFO -          dashboard at:         153.5.72.169:45279
+2026-07-29 12:54:33,569 - distributed.worker - INFO - Waiting to connect to:   tcp://153.5.72.244:33273
+2026-07-29 12:54:33,569 - distributed.worker - INFO - -------------------------------------------------
+2026-07-29 12:54:33,569 - distributed.worker - INFO -               Threads:                          4
+2026-07-29 12:54:33,569 - distributed.worker - INFO -                Memory:                   7.45 GiB
+2026-07-29 12:54:33,569 - distributed.worker - INFO -       Local Directory: /tmp/dask-scratch-space/worker-up15yrmr
+2026-07-29 12:54:33,569 - distributed.worker - INFO - -------------------------------------------------
+2026-07-29 12:54:37,147 - distributed.worker - INFO - Starting Worker plugin shuffle
+2026-07-29 12:54:37,147 - distributed.worker - INFO -         Registered to:   tcp://153.5.72.244:33273
+2026-07-29 12:54:37,147 - distributed.worker - INFO - -------------------------------------------------
+2026-07-29 12:54:37,147 - distributed.core - INFO - Starting established connection to tcp://153.5.72.244:33273
+2026-07-29 12:54:44,688 - distributed.core - INFO - Event loop was unresponsive in Worker for 7.54s.  This is often caused by long-running GIL-holding functions or moving large chunks of data. This can cause timeouts and instability.

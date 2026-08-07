@@ -12,10 +12,7 @@ Uses Dask bags for parallel downloads. Each worker:
   3. Returns (filename, schema_dict)
 
 Finalize step: compare all schemas, detect column-name/dtype mismatches per dataset.
-Save results to outputs/t0_schema_comparison.csv
-
-Usage:
-  python3 t0_download_and_schema.py
+Save results to outputs/t0_schema_comparison.cs
 """
 
 import os
@@ -30,11 +27,10 @@ import urllib.error
 import pyarrow.parquet as pq
 import pandas as pd
 
-# Try to import Dask; if not available, fall back to sequential
 try:
+    import dask
     import dask.bag as db
-    from dask.distributed import Client
-    from dask_jobqueue import SLURMCluster
+    dask.config.set(scheduler="threads", num_workers=8)  # I/O-bound downloads
     HAS_DASK = True
 except ImportError:
     print("WARNING: Dask not available, falling back to sequential downloads", file=sys.stderr)
@@ -241,28 +237,9 @@ def main():
     
     # Download and extract schemas
     if HAS_DASK:
-        logger.info("Using Dask bags for parallel downloads...")
-        try:
-            # Try to connect to SLURM cluster; if not available, use local threads
-            cluster = SLURMCluster(
-                cores=4,
-                processes=1,
-                memory="8GB",
-                walltime="02:00:00",
-                queue="all"
-            )
-            client = Client(cluster)
-            cluster.scale(jobs=4)
-            logger.info(f"Connected to SLURM cluster: {client}")
-        except Exception as e:
-            logger.warning(f"Could not connect to SLURM cluster ({e}), using local scheduler")
-            client = None
-        
-        bag = db.from_sequence(download_list, npartitions=len(download_list))
+        logger.info("Using Dask bags for parallel downloads (local scheduler)...")
+        bag = db.from_sequence(download_list, npartitions=min(len(download_list), 16))
         schema_results = bag.map(download_and_get_schema).compute()
-        
-        if client is not None:
-            client.close()
     else:
         logger.info("Using sequential downloads (Dask not available)...")
         schema_results = [download_and_get_schema(item) for item in download_list]

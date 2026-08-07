@@ -1,0 +1,6 @@
+format,size_mb,export_time_s,read_time_s
+csv,70.56,7.533,1.537
+csv_gz,12.17,17.745,1.439
+hdf5,115.08,3.252,1.427
+duckdb,18.76,2.073,0.65
+"parquet (original, from T1)",15.1,,

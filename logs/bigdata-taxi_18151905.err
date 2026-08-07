@@ -1,0 +1,29 @@
+2026-08-07 16:27:16,465 [INFO] ================================================================================
+2026-08-07 16:27:16,465 [INFO] Processing dataset: FHV
+2026-08-07 16:27:16,466 [INFO] ================================================================================
+2026-08-07 16:27:16,472 [INFO] [fhv] Found 135 part-files across 12 year partitions
+2026-08-07 16:27:34,717 [INFO] [fhv] Processed 20/135 files
+2026-08-07 16:28:16,956 [INFO] [fhv] Processed 40/135 files
+2026-08-07 16:28:47,069 [INFO] [fhv] Processed 60/135 files
+2026-08-07 16:28:51,570 [INFO] [fhv] Processed 80/135 files
+2026-08-07 16:28:56,576 [INFO] [fhv] Processed 100/135 files
+2026-08-07 16:29:01,400 [INFO] [fhv] Processed 120/135 files
+2026-08-07 16:29:06,575 [INFO] [fhv] Processed 135/135 files
+2026-08-07 16:29:06,587 [INFO] [fhv] Table saved to /d/hpc/projects/FRI/bigdata/students/em51537/bigdata-final-project/outputs/t2/t2_fhv_quality_by_year.csv
+2026-08-07 16:29:06,894 [INFO] [fhv] Chart saved to /d/hpc/projects/FRI/bigdata/students/em51537/bigdata-final-project/outputs/t2/figs/t2_fhv_quality_by_year.png
+2026-08-07 16:29:06,897 [INFO] 
+[fhv] Summary:
+      year_out_of_range  same_pickup_dropoff  dropoff_before_pickup  total_rows
+year                                                                           
+2015                  0                    0               63387762    63388532
+2016                  0                    0              132112979   132114083
+2017                  0                    0               72807164   192309557
+2018                  0                  205                   7509   260874754
+2019                  0                   12                     66    43261276
+2020                  0                    0                      0    14945465
+2021                  0                    0                      0    14805265
+2022                  0                    0                      0    14511664
+2023                  0                    0                      1    15858639
+2024                  0                    0                      0    17630326
+2025                  0                   44                    292    24860987
+2026                  0                    0                      1     3890251

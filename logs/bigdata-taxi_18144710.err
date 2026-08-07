@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "/d/hpc/projects/FRI/bigdata/students/em51537/bigdata-final-project/scripts/t4_format_comparison.py", line 16, in <module>
+    import duckdb
+ModuleNotFoundError: No module named 'duckdb'

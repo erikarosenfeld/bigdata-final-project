@@ -1,0 +1,7 @@
+2026-07-29 15:54:22,403 [INFO] ================================================================================
+2026-07-29 15:54:22,403 [INFO] Processing dataset: YELLOW
+2026-07-29 15:54:22,403 [INFO] ================================================================================
+2026-07-29 15:54:22,418 [INFO] [yellow] Excluded 36 file(s) before 2012-01 per project instructions
+2026-07-29 15:54:22,418 [INFO] [yellow] Found 170 files (filtered to 2012-01 onwards per instructions)
+2026-07-29 15:55:04,037 [INFO] [yellow] Schema sanity check passed — all columns mapped.
+2026-07-29 15:55:18,568 [INFO] [yellow] Repartitioning and saving to /d/hpc/projects/FRI/bigdata/students/em51537/repartitioned_data/yellow ...

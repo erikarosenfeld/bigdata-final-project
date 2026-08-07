@@ -1,0 +1,18 @@
+2026-07-29 13:48:09,969 - distributed.nanny - INFO -         Start Nanny at: 'tcp://153.5.72.165:37541'
+2026-07-29 13:48:11,015 - distributed.worker - INFO -       Start worker at:   tcp://153.5.72.165:33693
+2026-07-29 13:48:11,015 - distributed.worker - INFO -          Listening to:   tcp://153.5.72.165:33693
+2026-07-29 13:48:11,015 - distributed.worker - INFO -           Worker name:             SLURMCluster-2
+2026-07-29 13:48:11,015 - distributed.worker - INFO -          dashboard at:         153.5.72.165:41415
+2026-07-29 13:48:11,016 - distributed.worker - INFO - Waiting to connect to:   tcp://153.5.72.244:45295
+2026-07-29 13:48:11,016 - distributed.worker - INFO - -------------------------------------------------
+2026-07-29 13:48:11,016 - distributed.worker - INFO -               Threads:                          4
+2026-07-29 13:48:11,016 - distributed.worker - INFO -                Memory:                   7.45 GiB
+2026-07-29 13:48:11,016 - distributed.worker - INFO -       Local Directory: /tmp/dask-scratch-space/worker-c7i5xfar
+2026-07-29 13:48:11,016 - distributed.worker - INFO - -------------------------------------------------
+2026-07-29 13:48:14,141 - distributed.worker - INFO - Starting Worker plugin shuffle
+2026-07-29 13:48:14,141 - distributed.worker - INFO -         Registered to:   tcp://153.5.72.244:45295
+2026-07-29 13:48:14,141 - distributed.worker - INFO - -------------------------------------------------
+2026-07-29 13:48:14,142 - distributed.core - INFO - Starting established connection to tcp://153.5.72.244:45295
+2026-07-29 13:48:19,299 - distributed.core - INFO - Event loop was unresponsive in Worker for 5.16s.  This is often caused by long-running GIL-holding functions or moving large chunks of data. This can cause timeouts and instability.
+2026-07-29 13:48:44,929 - distributed.worker - INFO - Stopping worker at tcp://153.5.72.165:33693. Reason: scheduler-close
+[2026-07-29T13:48:44.931] error: *** JOB 17945563 ON wn165 CANCELLED AT 2026-07-29T13:48:44 DUE to SIGNAL Terminated ***

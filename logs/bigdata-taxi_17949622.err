@@ -1,0 +1,73 @@
+2026-07-29 16:10:18,845 [INFO] ================================================================================
+2026-07-29 16:10:18,845 [INFO] Processing dataset: FHVHV
+2026-07-29 16:10:18,845 [INFO] ================================================================================
+2026-07-29 16:10:18,857 [INFO] [fhvhv] Found 85 files (filtered to 2019-02 onwards per instructions)
+2026-07-29 16:10:31,460 [INFO] [fhvhv] Schema sanity check passed — all columns mapped.
+2026-07-29 16:10:42,686 [INFO] [fhvhv] Repartitioning and saving to /d/hpc/projects/FRI/bigdata/students/em51537/repartitioned_data/fhvhv ...
+Traceback (most recent call last):
+  File "/d/hpc/projects/FRI/bigdata/students/em51537/bigdata-final-project/scripts/t1_repartition.py", line 363, in <module>
+    main()
+  File "/d/hpc/projects/FRI/bigdata/students/em51537/bigdata-final-project/scripts/t1_repartition.py", line 359, in main
+    process_dataset(dataset, check_only=args.check_only)
+  File "/d/hpc/projects/FRI/bigdata/students/em51537/bigdata-final-project/scripts/t1_repartition.py", line 332, in process_dataset
+    ddf.repartition(partition_size="200MB").to_parquet(
+  File "/d/hpc/projects/onj_fri/nlpeers/em51537_conda/envs/bigdata/lib/python3.11/site-packages/dask/dataframe/dask_expr/_collection.py", line 3327, in to_parquet
+    return to_parquet(self, path, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/d/hpc/projects/onj_fri/nlpeers/em51537_conda/envs/bigdata/lib/python3.11/site-packages/dask/dataframe/dask_expr/io/parquet.py", line 534, in to_parquet
+    if not df.known_divisions:
+           ^^^^^^^^^^^^^^^^^^
+  File "/d/hpc/projects/onj_fri/nlpeers/em51537_conda/envs/bigdata/lib/python3.11/site-packages/dask/dataframe/dask_expr/_collection.py", line 644, in known_divisions
+    return self.expr.known_divisions
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/d/hpc/projects/onj_fri/nlpeers/em51537_conda/envs/bigdata/lib/python3.11/site-packages/dask/dataframe/dask_expr/_expr.py", line 439, in known_divisions
+    return len(self.divisions) > 0 and self.divisions[0] is not None
+               ^^^^^^^^^^^^^^
+  File "/d/hpc/projects/onj_fri/nlpeers/em51537_conda/envs/bigdata/lib/python3.11/functools.py", line 1001, in __get__
+    val = self.func(instance)
+          ^^^^^^^^^^^^^^^^^^^
+  File "/d/hpc/projects/onj_fri/nlpeers/em51537_conda/envs/bigdata/lib/python3.11/site-packages/dask/dataframe/dask_expr/_expr.py", line 431, in divisions
+    return tuple(self._divisions())
+                 ^^^^^^^^^^^^^^^^^
+  File "/d/hpc/projects/onj_fri/nlpeers/em51537_conda/envs/bigdata/lib/python3.11/site-packages/dask/dataframe/dask_expr/_repartition.py", line 57, in _divisions
+    x = self.optimize(fuse=False)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/d/hpc/projects/onj_fri/nlpeers/em51537_conda/envs/bigdata/lib/python3.11/site-packages/dask/dataframe/dask_expr/_expr.py", line 97, in optimize
+    return optimize(self, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/d/hpc/projects/onj_fri/nlpeers/em51537_conda/envs/bigdata/lib/python3.11/site-packages/dask/_expr.py", line 925, in optimize
+    return optimize_until(expr, stage)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/d/hpc/projects/onj_fri/nlpeers/em51537_conda/envs/bigdata/lib/python3.11/site-packages/dask/_expr.py", line 945, in optimize_until
+    expr = expr.lower_completely()
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/d/hpc/projects/onj_fri/nlpeers/em51537_conda/envs/bigdata/lib/python3.11/site-packages/dask/_expr.py", line 523, in lower_completely
+    new = expr.lower_once(lowered)
+          ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/d/hpc/projects/onj_fri/nlpeers/em51537_conda/envs/bigdata/lib/python3.11/site-packages/dask/_expr.py", line 478, in lower_once
+    out = expr._lower()
+          ^^^^^^^^^^^^^
+  File "/d/hpc/projects/onj_fri/nlpeers/em51537_conda/envs/bigdata/lib/python3.11/site-packages/dask/dataframe/dask_expr/_repartition.py", line 461, in _lower
+    self._mem_usage
+  File "/d/hpc/projects/onj_fri/nlpeers/em51537_conda/envs/bigdata/lib/python3.11/functools.py", line 1001, in __get__
+    val = self.func(instance)
+          ^^^^^^^^^^^^^^^^^^^
+  File "/d/hpc/projects/onj_fri/nlpeers/em51537_conda/envs/bigdata/lib/python3.11/site-packages/dask/dataframe/dask_expr/_repartition.py", line 430, in _mem_usage
+    return _get_mem_usages(self.frame)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/d/hpc/projects/onj_fri/nlpeers/em51537_conda/envs/bigdata/lib/python3.11/site-packages/dask/dataframe/dask_expr/_repartition.py", line 514, in _get_mem_usages
+    result = _compute_mem_usages(frame)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/d/hpc/projects/onj_fri/nlpeers/em51537_conda/envs/bigdata/lib/python3.11/site-packages/dask/dataframe/dask_expr/_repartition.py", line 522, in _compute_mem_usages
+    return new_collection(TotalMemoryUsageFrame(frame, deep=True)).compute()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/d/hpc/projects/onj_fri/nlpeers/em51537_conda/envs/bigdata/lib/python3.11/site-packages/dask/base.py", line 392, in compute
+    (result,) = compute(self, traverse=False, **kwargs)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/d/hpc/projects/onj_fri/nlpeers/em51537_conda/envs/bigdata/lib/python3.11/site-packages/dask/base.py", line 769, in compute
+    results = schedule(expr, keys, **kwargs)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/d/hpc/projects/onj_fri/nlpeers/em51537_conda/envs/bigdata/lib/python3.11/concurrent/futures/_base.py", line 401, in __get_result
+    raise self._exception
+concurrent.futures.process.BrokenProcessPool: A process in the process pool was terminated abruptly while the future was running or pending.
+[2026-07-29T16:12:08.926] error: Detected 1 oom_kill event in StepId=17949622.batch. Some of the step tasks have been OOM Killed.

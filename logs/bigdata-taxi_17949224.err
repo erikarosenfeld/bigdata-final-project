@@ -1,0 +1,8 @@
+2026-07-29 15:55:22,268 [INFO] ================================================================================
+2026-07-29 15:55:22,268 [INFO] Processing dataset: FHV
+2026-07-29 15:55:22,268 [INFO] ================================================================================
+2026-07-29 15:55:22,279 [INFO] [fhv] Found 134 files (filtered to 2015-01 onwards per instructions)
+2026-07-29 15:55:41,199 [INFO] [fhv] Schema sanity check passed — all columns mapped.
+2026-07-29 15:55:42,668 [INFO] [fhv] Repartitioning and saving to /d/hpc/projects/FRI/bigdata/students/em51537/repartitioned_data/fhv ...
+2026-07-29 16:00:00,342 [INFO] [fhv] Done.
+2026-07-29 16:01:30,992 [INFO] [fhv] Year counts saved to /d/hpc/projects/FRI/bigdata/students/em51537/bigdata-final-project/outputs/t1/t1_fhv_year_counts.csv

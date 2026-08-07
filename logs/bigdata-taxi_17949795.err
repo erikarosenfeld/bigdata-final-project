@@ -1,0 +1,18 @@
+2026-07-29 17:25:10,256 [INFO] ================================================================================
+2026-07-29 17:25:10,256 [INFO] Processing dataset: YELLOW
+2026-07-29 17:25:10,256 [INFO] ================================================================================
+2026-07-29 17:25:10,267 [INFO] [yellow] Excluded 36 file(s) before 2012-01 per project instructions
+2026-07-29 17:25:10,268 [INFO] [yellow] Found 170 files (filtered to 2012-01 onwards per instructions)
+2026-07-29 17:25:30,227 [INFO] [yellow] Schema sanity check passed — all columns mapped.
+2026-07-29 17:25:30,228 [INFO] [yellow] Processing 170 files, 3 at a time (one file's worth of data in memory per worker)...
+2026-07-29 17:28:04,843 [INFO] [yellow] Processed 20/170 files
+2026-07-29 17:30:24,985 [INFO] [yellow] Processed 40/170 files
+2026-07-29 17:32:04,976 [INFO] [yellow] Processed 60/170 files
+2026-07-29 17:33:51,754 [INFO] [yellow] Processed 80/170 files
+2026-07-29 17:35:09,942 [INFO] [yellow] Processed 100/170 files
+2026-07-29 17:35:42,798 [INFO] [yellow] Processed 120/170 files
+2026-07-29 17:36:19,107 [INFO] [yellow] Processed 140/170 files
+2026-07-29 17:37:12,006 [INFO] [yellow] Processed 160/170 files
+2026-07-29 17:37:31,951 [INFO] [yellow] Processed 170/170 files
+2026-07-29 17:37:31,990 [INFO] [yellow] Done. Output at /d/hpc/projects/FRI/bigdata/students/em51537/repartitioned_data/yellow
+2026-07-29 17:37:32,005 [INFO] [yellow] Year counts saved to /d/hpc/projects/FRI/bigdata/students/em51537/bigdata-final-project/outputs/t1/t1_yellow_year_counts.csv

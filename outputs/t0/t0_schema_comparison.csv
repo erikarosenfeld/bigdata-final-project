@@ -1,0 +1,5 @@
+dataset,num_files,num_columns,schema_consistent,issues
+yellow,13,20,True,None
+green,13,21,True,None
+fhv,13,7,True,None
+fhvhv,13,25,True,None

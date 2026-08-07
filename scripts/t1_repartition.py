@@ -8,11 +8,14 @@ For each dataset (Yellow, Green, FHV, FHVHV):
   3. Add a 'year' column derived from pickup datetime
   4. Repartition to ~200MB files with ~2M row row-groups, partitioned by year
 
-Each dataset gets its own unified schema
+Each dataset gets its OWN unified schema — Yellow/Green share most fare fields,
+FHV is minimal (no fare data), FHVHV has a different, larger set of fields.
+This is expected: T1 standardizes schema *within* a dataset across years, not
+across datasets.
 
 A sanity check runs before processing: it inspects real column names found in
-your files and flags any that aren't in COLUMN_MAP, so mapping gaps are
-caught immediately.
+your files and flags any that aren't in COLUMN_MAP below, so mapping gaps are
+caught immediately instead of silently dropping data.
 
 Usage:
   python3 t1_repartition.py                  # process all 4 datasets
@@ -21,13 +24,19 @@ Usage:
 """
 
 import argparse
+import concurrent.futures
 import glob
 import logging
 import os
 
-import dask
-import dask.dataframe as dd
 import pandas as pd
+import pyarrow as pa
+import pyarrow.parquet as pq
+
+# No Dask for the heavy processing step — per the project instructions,
+# a per-file PyArrow approach is "more flexible and less memory consuming"
+# than a Dask-dataframe shuffle. Each worker process handles one source
+# file at a time, so peak memory stays bounded regardless of dataset size.
 
 # ============================================================================
 # Configuration
@@ -54,7 +63,7 @@ logger = logging.getLogger(__name__)
 # Per-dataset schema definitions
 # ============================================================================
 
-# --- YELLOW --- (mapping reused from assingment 3)
+# --- YELLOW --- (exact mapping reused from earlier coursework, task3.ipynb)
 YELLOW_COLUMN_MAP = {
     'vendor_name': 'VendorID', 'vendor_id': 'VendorID', 'VendorID': 'VendorID',
     'Trip_Pickup_DateTime': 'Pickup_DateTime', 'pickup_datetime': 'Pickup_DateTime',
@@ -201,7 +210,8 @@ DATETIME_COLUMNS_HINT = [
 def get_files_for_dataset(dataset: str):
     """
     Glob files from both the historical (read-only) and new (T0) locations,
-    then filter to the minimum year-month required by the instructions.
+    then filter to the minimum year-month required by the project instructions
+    (e.g. Yellow only from 2012-01 onwards, even though older files exist on Arnes).
     """
     import re
 
@@ -287,7 +297,38 @@ def standardize_partition(df: pd.DataFrame, dataset: str) -> pd.DataFrame:
     return df
 
 
-def process_dataset(dataset: str, check_only: bool = False):
+def process_one_file(f: str, dataset: str) -> dict:
+    """
+    Process a single source file end-to-end: read, standardize, split by
+    year, write each year's rows as its own output part-file. Only ever
+    holds ONE file's data in memory — this is what keeps memory bounded
+    regardless of how many files or how large the dataset is overall.
+    Returns a dict of {year: row_count} for this file.
+    """
+    config = DATASET_CONFIG[dataset]
+    pickup_col = config["pickup_col"]
+
+    df = pd.read_parquet(f)
+    df = standardize_partition(df, dataset)
+    df["year"] = df[pickup_col].dt.year
+
+    out_base = os.path.join(OUT_DATA_DIR, dataset)
+    year_counts = {}
+    stem = os.path.splitext(os.path.basename(f))[0]
+
+    for year, group in df.groupby("year"):
+        year_dir = os.path.join(out_base, f"year={year}")
+        os.makedirs(year_dir, exist_ok=True)
+        out_file = os.path.join(year_dir, f"{stem}.parquet")
+
+        table = pa.Table.from_pandas(group.drop(columns=["year"]), preserve_index=False)
+        pq.write_table(table, out_file, row_group_size=2_000_000)
+        year_counts[int(year)] = len(group)
+
+    return year_counts
+
+
+def process_dataset(dataset: str, check_only: bool = False, workers: int = 3):
     logger.info("=" * 80)
     logger.info(f"Processing dataset: {dataset.upper()}")
     logger.info("=" * 80)
@@ -310,35 +351,36 @@ def process_dataset(dataset: str, check_only: bool = False):
         logger.warning(f"[{dataset}] Proceeding despite unmapped columns — "
                         f"those columns will be dropped. Fix COLUMN_MAP and rerun for correctness.")
 
-    config = DATASET_CONFIG[dataset]
-    pickup_col = config["pickup_col"]
+    logger.info(f"[{dataset}] Processing {len(files)} files, {workers} at a time "
+                f"(one file's worth of data in memory per worker)...")
 
-    @dask.delayed
-    def read_and_standardize(f):
-        df = pd.read_parquet(f)
-        return standardize_partition(df, dataset)
+    total_year_counts = {}
+    completed = 0
 
-    delayed_dfs = [read_and_standardize(f) for f in files]
-    meta = standardize_partition(pd.read_parquet(files[0]), dataset).iloc[0:0]
-    ddf = dd.from_delayed(delayed_dfs, meta=meta)
+    with concurrent.futures.ProcessPoolExecutor(max_workers=workers) as executor:
+        future_to_file = {
+            executor.submit(process_one_file, f, dataset): f for f in files
+        }
+        for future in concurrent.futures.as_completed(future_to_file):
+            f = future_to_file[future]
+            try:
+                year_counts = future.result()
+                for year, count in year_counts.items():
+                    total_year_counts[year] = total_year_counts.get(year, 0) + count
+                completed += 1
+                if completed % 20 == 0 or completed == len(files):
+                    logger.info(f"[{dataset}] Processed {completed}/{len(files)} files")
+            except Exception as e:
+                logger.error(f"[{dataset}] Failed on {os.path.basename(f)}: {e}")
 
-    ddf["year"] = ddf[pickup_col].dt.year
+    logger.info(f"[{dataset}] Done. Output at {os.path.join(OUT_DATA_DIR, dataset)}")
 
-    out_path = os.path.join(OUT_DATA_DIR, dataset)
-    logger.info(f"[{dataset}] Repartitioning and saving to {out_path} ...")
-    ddf.repartition(partition_size="200MB").to_parquet(
-        out_path,
-        partition_on=["year"],
-        row_group_size=2_000_000,
-        engine="pyarrow",
-        write_index=False,
-    )
-    logger.info(f"[{dataset}] Done.")
-
-    # Save a small per-year row count report to the repo's outputs/
-    year_counts = ddf.groupby("year").size().compute()
+    # Save per-year row count report to the repo's outputs/
     report_path = os.path.join(OUT_DIR, f"t1_{dataset}_year_counts.csv")
-    year_counts.to_csv(report_path, header=["row_count"])
+    year_df = pd.DataFrame(
+        sorted(total_year_counts.items()), columns=["year", "row_count"]
+    )
+    year_df.to_csv(report_path, index=False)
     logger.info(f"[{dataset}] Year counts saved to {report_path}")
 
 
@@ -348,12 +390,15 @@ def main():
                          help="Process a single dataset only (default: all four)")
     parser.add_argument("--check-only", action="store_true",
                          help="Only run the schema sanity check, no processing")
+    parser.add_argument("--workers", type=int, default=3,
+                         help="Number of files to process in parallel "
+                              "(each holds one file's data in memory — lower this if OOM)")
     args = parser.parse_args()
 
     datasets = [args.dataset] if args.dataset else list(DATASET_CONFIG.keys())
 
     for dataset in datasets:
-        process_dataset(dataset, check_only=args.check_only)
+        process_dataset(dataset, check_only=args.check_only, workers=args.workers)
 
 
 if __name__ == "__main__":

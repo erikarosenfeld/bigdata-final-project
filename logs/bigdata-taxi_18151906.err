@@ -1,0 +1,47 @@
+2026-08-07 16:27:56,997 [INFO] ================================================================================
+2026-08-07 16:27:56,997 [INFO] Processing dataset: GREEN
+2026-08-07 16:27:56,997 [INFO] ================================================================================
+2026-08-07 16:27:57,009 [INFO] [green] Found 298 part-files across 22 year partitions
+2026-08-07 16:27:57,817 [INFO] [green] Processed 20/298 files
+2026-08-07 16:27:59,739 [INFO] [green] Processed 40/298 files
+2026-08-07 16:28:00,350 [INFO] [green] Processed 60/298 files
+2026-08-07 16:28:00,881 [INFO] [green] Processed 80/298 files
+2026-08-07 16:28:01,700 [INFO] [green] Processed 100/298 files
+2026-08-07 16:28:02,370 [INFO] [green] Processed 120/298 files
+2026-08-07 16:28:07,983 [INFO] [green] Processed 140/298 files
+2026-08-07 16:28:13,956 [INFO] [green] Processed 160/298 files
+2026-08-07 16:28:17,926 [INFO] [green] Processed 180/298 files
+2026-08-07 16:28:20,681 [INFO] [green] Processed 200/298 files
+2026-08-07 16:28:21,689 [INFO] [green] Processed 220/298 files
+2026-08-07 16:28:22,725 [INFO] [green] Processed 240/298 files
+2026-08-07 16:28:23,598 [INFO] [green] Processed 260/298 files
+2026-08-07 16:28:24,288 [INFO] [green] Processed 280/298 files
+2026-08-07 16:28:24,893 [INFO] [green] Processed 298/298 files
+2026-08-07 16:28:24,911 [INFO] [green] Table saved to /d/hpc/projects/FRI/bigdata/students/em51537/bigdata-final-project/outputs/t2/t2_green_quality_by_year.csv
+2026-08-07 16:28:26,409 [INFO] [green] Chart saved to /d/hpc/projects/FRI/bigdata/students/em51537/bigdata-final-project/outputs/t2/figs/t2_green_quality_by_year.png
+2026-08-07 16:28:26,412 [INFO] 
+[green] Summary:
+      year_out_of_range  same_pickup_dropoff  dropoff_before_pickup  zero_distance  zero_passengers  negative_fare  total_rows
+year                                                                                                                          
+2008                  1                    1                      0             22                0              1         115
+2009                  2                    1                      0             39                0              3         315
+2010                348                    1                      0             17                0              1         348
+2012                  3                    0                      0              0                0              0           3
+2014                  0                 9978                    202         241457             3346          11626    15837009
+2015                  0                12831                    259         273839             6100          30852    19233765
+2016                  0                11225                    101         218030             4375          32982    16385541
+2017                  0                 6640                     51         135719             1842          26636    11736906
+2018                  0                 5477                     28         103608            12371          23060     8899314
+2019                  0                14270                    302         138590            11688          19906     6300814
+2020                  0                 2448                     94          64464             3199           4422     1734166
+2021                  0                 1212                      2          40486             1431           2090     1068729
+2022                  0                 1500                      1          49391             3517           2163      840394
+2023                  0                 1033                      0          39493             6143           2217      787055
+2024                  0                  659                      2          34573             6792           2143      660204
+2025                  0                  566                   1344          24439             8256           1736      591369
+2026                  0                   53                      1           2676             1129            225       77655
+2030                  2                    0                      0              0                0              0           2
+2035                  1                    0                      0              1                0              0           1
+2041                  1                    0                      0              1                0              0           1
+2062                  1                    0                      0              1                0              0           1
+2081                  1                    0                      0              0                0              0           1

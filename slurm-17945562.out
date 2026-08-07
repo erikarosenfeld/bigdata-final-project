@@ -1,0 +1,17 @@
+2026-07-29 13:48:09,969 - distributed.nanny - INFO -         Start Nanny at: 'tcp://153.5.72.163:43035'
+2026-07-29 13:48:11,014 - distributed.worker - INFO -       Start worker at:   tcp://153.5.72.163:37893
+2026-07-29 13:48:11,015 - distributed.worker - INFO -          Listening to:   tcp://153.5.72.163:37893
+2026-07-29 13:48:11,015 - distributed.worker - INFO -           Worker name:             SLURMCluster-3
+2026-07-29 13:48:11,015 - distributed.worker - INFO -          dashboard at:         153.5.72.163:41775
+2026-07-29 13:48:11,015 - distributed.worker - INFO - Waiting to connect to:   tcp://153.5.72.244:45295
+2026-07-29 13:48:11,015 - distributed.worker - INFO - -------------------------------------------------
+2026-07-29 13:48:11,015 - distributed.worker - INFO -               Threads:                          4
+2026-07-29 13:48:11,015 - distributed.worker - INFO -                Memory:                   7.45 GiB
+2026-07-29 13:48:11,015 - distributed.worker - INFO -       Local Directory: /tmp/dask-scratch-space/worker-a70f44h8
+2026-07-29 13:48:11,015 - distributed.worker - INFO - -------------------------------------------------
+2026-07-29 13:48:14,141 - distributed.worker - INFO - Starting Worker plugin shuffle
+2026-07-29 13:48:14,142 - distributed.worker - INFO -         Registered to:   tcp://153.5.72.244:45295
+2026-07-29 13:48:14,142 - distributed.worker - INFO - -------------------------------------------------
+2026-07-29 13:48:14,143 - distributed.core - INFO - Starting established connection to tcp://153.5.72.244:45295
+2026-07-29 13:48:19,158 - distributed.core - INFO - Event loop was unresponsive in Worker for 5.02s.  This is often caused by long-running GIL-holding functions or moving large chunks of data. This can cause timeouts and instability.
+[2026-07-29T13:48:44.927] error: *** JOB 17945562 ON wn163 CANCELLED AT 2026-07-29T13:48:44 DUE to SIGNAL Terminated ***

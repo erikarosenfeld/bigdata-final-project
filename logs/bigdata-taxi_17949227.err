@@ -1,0 +1,8 @@
+2026-07-29 15:55:22,270 [INFO] ================================================================================
+2026-07-29 15:55:22,270 [INFO] Processing dataset: FHVHV
+2026-07-29 15:55:22,270 [INFO] ================================================================================
+2026-07-29 15:55:22,283 [INFO] [fhvhv] Found 85 files (filtered to 2019-02 onwards per instructions)
+2026-07-29 15:55:48,339 [INFO] [fhvhv] Schema sanity check passed — all columns mapped.
+2026-07-29 15:56:12,307 [INFO] [fhvhv] Repartitioning and saving to /d/hpc/projects/FRI/bigdata/students/em51537/repartitioned_data/fhvhv ...
+/var/spool/slurm/job17949227/slurm_script: line 23: 3187431 Killed                  python3 "$@"
+[2026-07-29T15:57:30.352] error: Detected 1 oom_kill event in StepId=17949227.batch. Some of the step tasks have been OOM Killed.
