@@ -1,0 +1,75 @@
+2026-08-07 18:02:56,722 [INFO] ================================================================================
+2026-08-07 18:02:56,722 [INFO] Processing dataset: YELLOW
+2026-08-07 18:02:56,722 [INFO] ================================================================================
+2026-08-07 18:02:56,746 [INFO] [yellow] Found 475 part-files across 41 year partitions
+2026-08-07 18:02:58,677 [INFO] [yellow] Processed 20/475 files
+2026-08-07 18:03:02,498 [INFO] [yellow] Processed 40/475 files
+2026-08-07 18:03:03,734 [INFO] [yellow] Processed 60/475 files
+2026-08-07 18:03:05,047 [INFO] [yellow] Processed 80/475 files
+2026-08-07 18:03:07,903 [INFO] [yellow] Processed 100/475 files
+2026-08-07 18:03:09,262 [INFO] [yellow] Processed 120/475 files
+2026-08-07 18:03:10,527 [INFO] [yellow] Processed 140/475 files
+2026-08-07 18:03:11,614 [INFO] [yellow] Processed 160/475 files
+2026-08-07 18:03:13,250 [INFO] [yellow] Processed 180/475 files
+2026-08-07 18:03:14,826 [INFO] [yellow] Processed 200/475 files
+2026-08-07 18:03:16,204 [INFO] [yellow] Processed 220/475 files
+2026-08-07 18:03:34,281 [INFO] [yellow] Processed 240/475 files
+2026-08-07 18:05:07,292 [INFO] [yellow] Processed 260/475 files
+2026-08-07 18:06:56,989 [INFO] [yellow] Processed 280/475 files
+2026-08-07 18:08:51,663 [INFO] [yellow] Processed 300/475 files
+2026-08-07 18:10:07,697 [INFO] [yellow] Processed 320/475 files
+2026-08-07 18:10:58,931 [INFO] [yellow] Processed 340/475 files
+2026-08-07 18:11:24,339 [INFO] [yellow] Processed 360/475 files
+2026-08-07 18:11:42,174 [INFO] [yellow] Processed 380/475 files
+2026-08-07 18:12:15,723 [INFO] [yellow] Processed 400/475 files
+2026-08-07 18:12:53,739 [INFO] [yellow] Processed 420/475 files
+2026-08-07 18:13:31,183 [INFO] [yellow] Processed 440/475 files
+2026-08-07 18:13:52,413 [INFO] [yellow] Processed 460/475 files
+2026-08-07 18:13:53,428 [INFO] [yellow] Processed 475/475 files
+2026-08-07 18:13:53,460 [INFO] [yellow] Table saved to /d/hpc/projects/FRI/bigdata/students/em51537/bigdata-final-project/outputs/t2/t2_yellow_quality_by_year.csv
+2026-08-07 18:13:54,351 [INFO] [yellow] Chart saved to /d/hpc/projects/FRI/bigdata/students/em51537/bigdata-final-project/outputs/t2/figs/t2_yellow_quality_by_year.png
+2026-08-07 18:13:54,355 [INFO] 
+[yellow] Summary:
+      year_out_of_range  same_pickup_dropoff  missing_dropoff_placeholder  dropoff_before_pickup  zero_distance  zero_passengers  negative_fare  total_rows
+year                                                                                                                                                       
+2001                  5                    0                           27                      0              4                0              0          27
+2002                450                    0                          359                      0             84                0             18         498
+2003                 12                    1                           50                      0             19                0              0          50
+2004                  1                    0                            1                      0              0                0              0           1
+2007                  1                    0                            1                      0              0                0              0           1
+2008                  3                    4                          771                      0             42                0              6         771
+2009                  5                   11                         1304                      0             77                0              8        1304
+2010                  1                    0                            1                      0              0                0              0           1
+2011                  4                    0                            4                      0              0                0              0           4
+2012                  0               385642                            0                   1292         958564          1242327              0   171359008
+2013                  0               494450                            0                  10996        1119568             4938           3080   171816340
+2014                  0               356083                            1                   8906         954350             7995          18523   165447580
+2015                  0               171080                            5                   3912         876727            40683          51339   146039232
+2016                  0               141290                            5                   2175         773693            13431          55661   131131805
+2017                  0               107007                            3                   1444         743181           166087          56091   113500386
+2018                  0                89333                            2                   1042         704268           933067          67781   102870524
+2019                  0                77873                            0                   1071         743602          1525798         170050    84597309
+2020                  0                17401                            0                  20011         330084           489385          92833    24649266
+2021                  0                21710                            0                  37786         407782           703955         139322    30903983
+2022                  0                18422                            0                  13613         573980           763344         252883    39655622
+2023                  0                13094                            1                   2474         773445           583005         381649    38310138
+2024                  0                11935                            0                   1575         776306           401354         731023    41169691
+2025                  0               544069                            0                   2235        1402958           260062        2848621    48722584
+2026                  0                85665                            0                      3         248988            27671          66183     7124754
+2028                  1                    0                            0                      0              0                0              0           1
+2029                  7                    0                            0                      0              1                0              0           7
+2031                  2                    0                            0                      0              0                0              0           2
+2032                  1                    0                            0                      0              0                0              0           1
+2033                  3                    0                            0                      0              0                0              0           3
+2037                  1                    0                            0                      0              0                0              0           1
+2038                  4                    0                            0                      0              0                0              0           4
+2041                  3                    0                            0                      0              0                0              0           3
+2042                  1                    0                            0                      0              0                0              0           1
+2053                  2                    1                            0                      0              1                0              0           2
+2058                  3                    0                            0                      0              0                0              0           3
+2066                  1                    0                            0                      0              0                0              0           1
+2070                  1                    0                            0                      0              1                0              0           1
+2084                  8                    0                            0                      0              0                0              0           8
+2088                  2                    0                            0                      0              0                0              0           2
+2090                  0                    0                            0                      0              0                0              0           1
+2098                  1                    0                            0                      0              0                0              0           1
