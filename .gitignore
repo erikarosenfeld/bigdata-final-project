@@ -1,0 +1,26 @@
+# Large data files — never commit
+*.parquet
+*.csv
+*.csv.gz
+*.h5
+*.hdf5
+*.db
+*.duckdb
+*.zip
+data/
+
+# SLURM logs
+logs/*
+!logs/.gitkeep
+slurm/logs/
+
+# Python
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.venv/
+venv/
+
+# OS
+.DS_Store
+!outputs/**

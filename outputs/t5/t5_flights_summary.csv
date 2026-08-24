@@ -1,0 +1,2 @@
+total_sample_rows,arrivals_matched,departures_matched,date_hour_rows,date_min,date_max,distinct_dates_with_data,days_in_range
+3000000,159076,160040,38418,2019-01-01,2023-09-01,1705,1705

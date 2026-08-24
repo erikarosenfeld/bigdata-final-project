@@ -7,8 +7,6 @@ Uses the year=2024 Green Taxi partition already produced by T1
 and a DuckDB database file, then compares file size and pandas read speed
 across all four formats.
 
-Usage:
-  python3 t4_format_comparison.py
 """
 
 import glob
@@ -28,12 +26,10 @@ REPO_DIR = os.path.join(WORK_DIR, "bigdata-final-project")
 
 INPUT_DIR = os.path.join(WORK_DIR, "repartitioned_data", "green", "year=2024")
 
-# Large exported test files (CSV/HDF5/DuckDB copies of the data) live OUTSIDE
-# the repo — these are multi-format copies of real data, not small results.
+
 SCRATCH_DIR = os.path.join(WORK_DIR, "t4_scratch")
 os.makedirs(SCRATCH_DIR, exist_ok=True)
 
-# Only the small comparison results table goes inside the repo
 OUT_DIR = os.path.join(REPO_DIR, "outputs", "t4")
 os.makedirs(OUT_DIR, exist_ok=True)
 
