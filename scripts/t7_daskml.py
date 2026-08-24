@@ -24,7 +24,6 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(me
 logger = logging.getLogger(__name__)
 
 TO_TIME = pd.Timestamp("2026-03-01")
-FROM_TIME = pd.Timestamp("2022-04-01")
 TIME_SPLIT = pd.Timestamp("2025-01-01")
 DATASET_YEAR_RANGE = {
     "yellow": pd.Timestamp("2012-01-01"),
@@ -61,8 +60,7 @@ def process_dataset(dataset):
     
     # FILTER DATA BASED ON THE DATASET START
     logger.info("Filtering dataset based on the dataset time range...")
-    #df = df[df["date"]>=DATASET_YEAR_RANGE[dataset]]
-    df = df[df["date"]<=FROM_TIME]
+    df = df[df["date"]>=DATASET_YEAR_RANGE[dataset]]
 
     # ONE HOT ENCODING
     logger.info("Creating one hot encoding...")

@@ -25,7 +25,6 @@ os.makedirs(FIG_DIR, exist_ok=True)
 
 # TIME RANGES 
 TO_TIME = pd.Timestamp("2026-03-01")
-FROM_TIME = pd.Timestamp("2022-04-01")
 TIME_SPLIT = pd.Timestamp("2025-01-01")
 DATASET_YEAR_RANGE = {"yellow": 2012, "green": 2014, "fhv": 2015, "fhvhv": 2019, "total": 2012,}
 
@@ -61,8 +60,8 @@ def process_dataset(dataset):
     logger.info(f"[{dataset}] Loading data...")
     df = dd.read_parquet(PREPROCESSED_DATASET)
     logger.info("Filtering dataset based on the dataset time range...")
-    #df = df[df["year"]>=DATASET_YEAR_RANGE[dataset]]
-    df = df[df["date"]>FROM_TIME]
+    df = df[df["year"]>=DATASET_YEAR_RANGE[dataset]]
+
 
     # ONE HOT ENCODING
     logger.info("Creating one hot encoding...")
