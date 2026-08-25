@@ -49,6 +49,16 @@ def get_heatmap(dataset):
     plt.savefig(fig_path, format="pdf", bbox_inches="tight")
     plt.close()
 
+def get_spatial(dataset):
+    path_to_dataset = f"{INPUT_BASE}/{dataset}/year=*/*.parquet"
+    return duckdb.query(f"""
+    SELECT PULocationID as location_id,
+    DATE_TRUNC('month', Pickup_DateTime) AS month, 
+    COUNT(*) AS trip_count
+    FROM read_parquet('{path_to_dataset}') 
+    WHERE Pickup_DateTime >= '2019-02-01' AND Pickup_DateTime <= '2026-02-01'
+    GROUP BY location_id, month
+    ORDER BY location_id, month""").to_df()
 
 def get_monthly(dataset):
     path_to_dataset = f"{INPUT_BASE}/{dataset}/year=*/*.parquet"
@@ -99,11 +109,13 @@ def get_distance_stats(dataset):
         FROM read_parquet('{path_to_dataset}')
         WHERE YEAR(Pickup_DateTime) > {DATASET_CHECKS[dataset]["min_year"]}
         AND Pickup_DateTime <= '2026-02-01'
-        WHERE {distance} >= 0""").df() 
+        AND {distance} >= 0""").df() 
 
 def main():
     monthly = pd.DataFrame({"month": pd.date_range(start="2019-02-01", end="2026-02-01", freq="MS")})
     datasets = ["yellow", "green", "fhv", "fhvhv"]
+    df_locations = pd.DataFrame()
+
     for dataset in datasets:
         logger.info("=" * 80)
         logger.info(f"Processing dataset: {dataset.upper()}")
@@ -123,6 +135,8 @@ def main():
             duration_stats = get_duration_stats(dataset)
             distance_stats = get_distance_stats(dataset)
 
+            df_locations = pd.concat([df_locations, get_spatial(dataset)], ignore_index=True)
+
             if duration_stats is not None: 
                 logger.info(f"Duration stats:")
                 logger.info(f"{duration_stats}")
@@ -138,6 +152,18 @@ def main():
     monthly_correlation = monthly[datasets].corr()
     monthly_correlation.to_csv(os.path.join(OUT_DIR, "monthly_corr.csv"), index=True)
     logger.info(f"Monthly trip demand correlation between the datasets: {monthly_correlation}")
+
+    df_spatial = df_locations.groupby(["location_id", "month"])["trip_count"].sum().reset_index()
+    plt.figure(figsize=(32,20))
+    for l in df_spatial["location_id"].unique():
+        df_l = df_spatial[df_spatial["location_id"]==l]
+        plt.plot(df_l["month"], df_l["trip_count"], label=int(l))
+    plt.xlabel("Month")
+    plt.ylabel("Taxi demand")
+    plt.legend()
+    plt.title("Number of trips per location per month")
+    plt.savefig(os.path.join(FIG_DIR,"spatial_monthly.pdf"), format="pdf", dpi=150)
+
 
 if __name__ == "__main__":
     main()
